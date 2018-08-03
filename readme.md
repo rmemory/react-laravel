@@ -1,5 +1,9 @@
 # Introduction
 
+This project provides an example of how to use Laravel with React
+
+# Setup
+
 This project demonstrates an example of using React with Laravel.
 
 Initial project creation and commit to github
@@ -34,4 +38,23 @@ $ git add -A .
 $ git commit -m "Add auth and react"
 $ git push -u origin master
 $ php artisan migrate
+```
+
+# Notes
+
+When creating a foreign key, do the following:
+
+```
+    public function up()
+    {
+        Schema::create('posts', function (Blueprint $table) {
+			$table->increments('id');
+			$table->integer('user_id')->unsigned();
+			$table->string('body', 140);
+			$table->timestamps();
+		});
+		Schema::table('posts', function($table) {
+			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+		});
+    }
 ```
