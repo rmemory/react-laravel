@@ -47,7 +47,6 @@ class PostController extends Controller
 			
 			//pass validator errors as errors object for ajax response
 			return $response->validation(['errors'=>$validator->errors()]);
-			// return response()->json(['errors'=>$validator->errors()]);
 		}
 
 		// Validation is happy, create the post

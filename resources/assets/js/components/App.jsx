@@ -52,9 +52,14 @@ class App extends Component {
 				});
 			}
 		} catch (e) {
+			let errors = {};
+			if (e['response']['data']['errors'] !== undefined) {
+				errors = e['response']['data']['errors'];
+			}
+
 			this.setState({ // eslint-disable-line react/no-did-mount-set-state
 				hasError: true,
-				errors: e['response']['data']['errors'],
+				errors,
 			});
 		}
 	}
@@ -125,16 +130,7 @@ class App extends Component {
 									{
 										// If there are error messages
 										hasError &&
-											<div>
-												<br />
-												<div className="alert alert-danger">
-													<ul>
-														{Object.keys(errors).map(errorKey => 
-															<Errors key={errorKey} errorMsg={errors[errorKey]} />
-														)}
-													</ul>
-												</div>
-											</div>
+											<Errors errors={errors} />
 									}
 								</form>
 							</div>

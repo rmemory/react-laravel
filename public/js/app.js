@@ -55824,7 +55824,7 @@ var App = function (_Component) {
 		key: 'handleSubmit',
 		value: function () {
 			var _ref = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee(event) {
-				var target, result;
+				var target, result, errors;
 				return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
 					while (1) {
 						switch (_context.prev = _context.next) {
@@ -55854,19 +55854,24 @@ var App = function (_Component) {
 										errors: result.data
 									});
 								}
-								_context.next = 12;
+								_context.next = 14;
 								break;
 
 							case 9:
 								_context.prev = 9;
 								_context.t0 = _context['catch'](0);
+								errors = {};
+
+								if (_context.t0['response']['data']['errors'] !== undefined) {
+									errors = _context.t0['response']['data']['errors'];
+								}
 
 								this.setState({ // eslint-disable-line react/no-did-mount-set-state
 									hasError: true,
-									errors: _context.t0['response']['data']['errors']
+									errors: errors
 								});
 
-							case 12:
+							case 14:
 							case 'end':
 								return _context.stop();
 						}
@@ -56007,22 +56012,7 @@ var App = function (_Component) {
 									__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('input', { className: 'form-control', type: 'submit', value: 'Post' }),
 
 									// If there are error messages
-									hasError && __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-										'div',
-										null,
-										__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('br', null),
-										__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-											'div',
-											{ className: 'alert alert-danger' },
-											__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-												'ul',
-												null,
-												Object.keys(errors).map(function (errorKey) {
-													return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__Errors_jsx__["a" /* default */], { key: errorKey, errorMsg: errors[errorKey] });
-												})
-											)
-										)
-									)
+									hasError && __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__Errors_jsx__["a" /* default */], { errors: errors })
 								)
 							)
 						)
@@ -56846,11 +56836,26 @@ if (hadRuntime) {
 
 
 var Errors = function Errors(_ref) {
-	var errorMsg = _ref.errorMsg;
+	var errors = _ref.errors;
 	return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-		'li',
+		"div",
 		null,
-		errorMsg
+		__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("br", null),
+		__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+			"div",
+			{ className: "alert alert-danger" },
+			__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+				"ul",
+				null,
+				Object.keys(errors).map(function (errorKey) {
+					return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+						"li",
+						{ key: errorKey },
+						errors[errorKey]
+					);
+				})
+			)
+		)
 	);
 };
 
