@@ -1,21 +1,9 @@
 import React, { Fragment } from 'react';
 
-const Errors = ({errors}) => (
-	<div>
-		<br />
-		<div class="alert alert-danger">
-			<ul>
-				{
-					Object.values(errors).map(error => {
-						<li>
-							{{ error }}
-						</li>
-					})
-				}
-			</ul>
-		</div>
-	</div>
+const Errors = ({errorMsg}) => (
+	<li>
+		{errorMsg}
+	</li>
 );
-
 
 export default Errors;

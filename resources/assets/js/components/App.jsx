@@ -9,7 +9,7 @@ class App extends Component {
 		this.state = {
 			body: '',
 			posts: [],
-			errMsgs: [],
+			errors: {},
 			hasError: false,
 		}
 
@@ -17,21 +17,49 @@ class App extends Component {
 		this.handleTextAreaChange = this.handleTextAreaChange.bind(this);
 	}
 
+	// React's Error Boundary life cycle method
 	componentDidCatch(error, info) {
 		// Display fallback UI
-		this.setState({ hasError: true });
+		this.setState({ 
+			hasError: true,
+			errors: error,
+		});
 		// Log the error
 		console.error(error, info);
 	  }
 	
 
 	// Called when the user presses the submit button
-	handleSubmit (event) {
-		event.preventDefault();
-		this.postData();
+	async handleSubmit (event) {
+		try {
+			const target = event.target;
+			event.preventDefault();
+			const result = await axios
+				.post('/posts', {
+					body: this.state.body,
+				});
+			if (result.status === 200) {
+				target.reset();
+				this.setState({
+					hasError: false,
+					errMsg: {},
+					body: '', // clear the body
+				});
+			} else {
+				this.setState({ // eslint-disable-line react/no-did-mount-set-state
+					hasError: true,
+					errors: result.data,
+				});
+			}
+		} catch (e) {
+			this.setState({ // eslint-disable-line react/no-did-mount-set-state
+				hasError: true,
+				errors: e['response']['data']['errors'],
+			});
+		}
 	}
 
-	// Called as the user types, but does not submit
+	// Called as the user types a post, but does not submit
 	handleTextAreaChange (event) {
 		event.preventDefault();
 		this.setState({ 
@@ -47,52 +75,32 @@ class App extends Component {
 					body: this.state.body,
 				});
 			if (result.status === 200) {
-				console.log(`Successful submission of post: $result{}`);
 				this.setState({
 					hasError: false,
-					errMsg: [],
+					errMsg: {},
 					body: '', // clear the body
 				});
 			} else {
-				const errMsgs = this.parseErrors(result.data);
 				this.setState({ // eslint-disable-line react/no-did-mount-set-state
 					hasError: true,
-					errMsgs: errMsgs,
+					errors: result.data,
 				});
 			}
 		} catch (e) {
-			const errMsgs = this.parseErrors(e['response']['data']);
 			this.setState({ // eslint-disable-line react/no-did-mount-set-state
 				hasError: true,
-				errMsgs: errMsgs,
+				errors: e['response']['data']['errors'],
 				body: '',
 			});
 		}
 	}
 
-	parseErrors(errors) {
-		let returnList = [];
-		for (const errorObj of Object.values(errors)) {
-			for (const error of Object.values(errorObj)) {
-				returnList = [...returnList, error];
-			}
-		}
-		return returnList;
-	}
-
 	render() {
-		const { hasError, errMsgs, body } = this.state;
-		let message;
+		const { hasError, errors, body } = this.state;
 
-		if (hasError && errMsgs == '') {
-			// You can render any custom fallback UI
+		if (hasError && errors == {}) {
+			// Catch all case
 			return <h1>Whelp, this is awkward. Something went wrong</h1>;
-		}
-
-		let messages = 'Loading posts ...';
-
-		if (hasError) {
-			messages = errMsgs;
 		}
 
 		return (
@@ -110,16 +118,23 @@ class App extends Component {
 											name="text" id=""
 											onChange={this.handleTextAreaChange}
 											rows="5"
-
 											placeholder="What's up?"
 											required />
 									</div>
 									<input className="form-control" type="submit" value="Post" />
 									{
-										// If there are error msssages
-										messages.length > 0 &&
-											<Errors messages={messages} />
-										}
+										// If there are error messages
+										hasError &&
+											<div>
+												<br />
+												<div className="alert alert-danger">
+													<ul>
+														{Object.keys(errors).map(errorKey => 
+															<Errors key={errorKey} errorMsg={errors[errorKey]} />
+														)}
+													</ul>
+												</div>
+											</div>
 									}
 								</form>
 							</div>

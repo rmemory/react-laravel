@@ -24,11 +24,12 @@ class PostController extends Controller
 
 		// Don't call the validator yet: $this->validate(request(), $rules);
 
+		// Set up validator with initial rules, call validate below
 		$validator = Validator::make($data, $rules);
 
 		// Additional validation (if any) goes here
 		$validator->after(function ($validator) use($data) {
-			$testErrors = true;
+			$testErrors = false;
 
 			// Currently no additional validation to perform
 			if ($testErrors) {
