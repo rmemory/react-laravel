@@ -12,6 +12,11 @@ use Log;
 
 class PostController extends Controller
 {
+	public function index() {
+		$response = app(AjaxResponse::class);
+		return $response->success(Post::all());
+	}
+
 	public function create(Request $request, Post $post) {
 		$data = request()->all();
 		// Log::info('posts create:'.print_r($data, true));
@@ -49,11 +54,11 @@ class PostController extends Controller
 			return $response->validation(['errors'=>$validator->errors()]);
 		}
 
-		// Validation is happy, create the post
+		// Validation is happy, so we can now create and save the post
 		$createdPost = $request->user()->posts()->create([
 			'body' => $data['body'],
 		]);
 
-		return response()->json($post->with('user')->find($createdPost->id));
+		return $response->success($post->with('user')->find($createdPost->id));
 	}
 }

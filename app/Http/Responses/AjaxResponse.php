@@ -39,6 +39,7 @@ class AjaxResponse
 		$this->http_code = 400;
 		$this->success = false;
 		$this->payload = $payload;
+
 		return response()->json($this, $this->http_code);
 	}
 

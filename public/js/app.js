@@ -55770,6 +55770,8 @@ module.exports = camelize;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -55818,47 +55820,68 @@ var App = function (_Component) {
 			console.error(error, info);
 		}
 
-		// Called when the user presses the submit button
+		/* Called when the user presses the submit button. We wait for the response
+   * asynchronously. */
 
 	}, {
 		key: 'handleSubmit',
 		value: function () {
 			var _ref = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee(event) {
-				var target, result, errors;
+				var result, errorObject, errors;
 				return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
 					while (1) {
 						switch (_context.prev = _context.next) {
 							case 0:
 								_context.prev = 0;
-								target = event.target;
 
+								// const target = event.target;
 								event.preventDefault();
-								_context.next = 5;
+								_context.next = 4;
 								return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('/posts', {
 									body: this.state.body
 								});
 
-							case 5:
+							case 4:
 								result = _context.sent;
 
-								if (result.status === 200) {
-									target.reset();
-									this.setState({
-										hasError: false,
-										errMsg: {},
-										body: '' // clear the body
-									});
-								} else {
+
+								// We have received a result ...
+								// The first conditional handles a successful post
+								if (result.data && result.data.success === true && // likely only includes http_code = 200
+								result.status === 200) /* not part of the response payload */{
+
+										// target.reset();
+										this.setState({
+											hasError: false,
+											errors: {},
+											body: '', // clear the body
+											posts: [].concat(_toConsumableArray(this.state.posts), [result.data])
+										});
+									} else {
+									errorObject = {};
+									/*
+          * This case is here for the situation where the app running on the 
+          * server returns a response which for whatever reason failed, but 
+          * isn't interpreted by the client as a "server error" (which are handled
+          * by the catch statement below). In these situations, we only support 
+          * a single error message, which must be assigned to the "error" field
+          * in the response.
+          */
+
+									if (result.data.error !== undefined && result.data.error !== '') {
+										errorObject.aUniqueKey = result.data.error;
+									}
 									this.setState({ // eslint-disable-line react/no-did-mount-set-state
 										hasError: true,
-										errors: result.data
+										errors: errorObject
 									});
 								}
-								_context.next = 14;
+								// This catches the rest of the server errors
+								_context.next = 13;
 								break;
 
-							case 9:
-								_context.prev = 9;
+							case 8:
+								_context.prev = 8;
 								_context.t0 = _context['catch'](0);
 								errors = {};
 
@@ -55870,12 +55893,12 @@ var App = function (_Component) {
 									errors: errors
 								});
 
-							case 14:
+							case 13:
 							case 'end':
 								return _context.stop();
 						}
 					}
-				}, _callee, this, [[0, 9]]);
+				}, _callee, this, [[0, 8]]);
 			}));
 
 			function handleSubmit(_x) {
@@ -55895,6 +55918,9 @@ var App = function (_Component) {
 				body: event.target.value
 			});
 		}
+
+		// The render method
+
 	}, {
 		key: 'render',
 		value: function render() {
@@ -55904,7 +55930,7 @@ var App = function (_Component) {
 			    body = _state.body;
 
 
-			if (hasError && errors == {}) {
+			if (hasError && (errors === undefined || Object.keys(errors).length === 0 && errors.constructor === Object)) {
 				// Catch all case
 				return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 					'h1',
@@ -55928,7 +55954,7 @@ var App = function (_Component) {
 							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 								'div',
 								{ className: 'card-header' },
-								'Tweet something'
+								'Post something...'
 							),
 							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 								'div',
@@ -55941,6 +55967,7 @@ var App = function (_Component) {
 										{ className: 'form-group' },
 										__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('textarea', {
 											className: 'form-control',
+											value: this.state.body,
 											maxLength: '140',
 											name: 'text', id: '',
 											onChange: this.handleTextAreaChange,
@@ -55965,13 +55992,15 @@ var App = function (_Component) {
 							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 								'div',
 								{ className: 'card-header' },
-								'App Component'
+								'Recent posts'
 							),
-							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-								'div',
-								{ className: 'card-body' },
-								'I\'m an app component!'
-							)
+							this.state.posts.map(function (post) {
+								return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+									'div',
+									{ key: post['payload']['id'], className: 'card-body' },
+									post['payload']['body']
+								);
+							})
 						)
 					)
 				)

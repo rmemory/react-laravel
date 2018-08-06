@@ -29,28 +29,50 @@ class App extends Component {
 	  }
 	
 
-	// Called when the user presses the submit button
+	/* Called when the user presses the submit button. We wait for the response
+	 * asynchronously. */
 	async handleSubmit (event) {
 		try {
-			const target = event.target;
+			// const target = event.target;
 			event.preventDefault();
 			const result = await axios
 				.post('/posts', {
 					body: this.state.body,
 				});
-			if (result.status === 200) {
-				target.reset();
+			
+			// We have received a result ...
+			// The first conditional handles a successful post
+			if (result.data &&
+				result.data.success === true && // likely only includes http_code = 200
+				result.status === 200) /* not part of the response payload */ {
+
+				// target.reset();
 				this.setState({
 					hasError: false,
-					errMsg: {},
+					errors: {},
 					body: '', // clear the body
+					posts: [...this.state.posts, result.data],
 				});
+				
 			} else {
+				const errorObject = {};
+				/*
+				 * This case is here for the situation where the app running on the 
+				 * server returns a response which for whatever reason failed, but 
+				 * isn't interpreted by the client as a "server error" (which are handled
+				 * by the catch statement below). In these situations, we only support 
+				 * a single error message, which must be assigned to the "error" field
+				 * in the response.
+				 */
+				if (result.data.error !== undefined && result.data.error !== '') {
+					errorObject.aUniqueKey = result.data.error;
+				}
 				this.setState({ // eslint-disable-line react/no-did-mount-set-state
 					hasError: true,
-					errors: result.data,
+					errors: errorObject,
 				});
 			}
+		// This catches the rest of the server errors
 		} catch (e) {
 			let errors = {};
 			if (e['response']['data']['errors'] !== undefined) {
@@ -71,10 +93,13 @@ class App extends Component {
 		});
 	}
 
+	// The render method
 	render() {
 		const { hasError, errors, body } = this.state;
 
-		if (hasError && errors == {}) {
+		if (hasError && (errors === undefined ||
+						 (Object.keys(errors).length === 0 &&
+						  errors.constructor === Object))) {
 			// Catch all case
 			return <h1>Whelp, this is awkward. Something went wrong</h1>;
 		}
@@ -84,12 +109,13 @@ class App extends Component {
 				<div className="row justify-content-center">
 					<div className="col-md-6">
 						<div className="card">
-							<div className="card-header">Tweet something</div>
+							<div className="card-header">Post something...</div>
 							<div className="card-body">
 								<form onSubmit={this.handleSubmit}>
 									<div className="form-group">
 										<textarea 
 											className="form-control"
+											value={this.state.body}
 											maxLength="140"
 											name="text" id=""
 											onChange={this.handleTextAreaChange}
@@ -109,11 +135,14 @@ class App extends Component {
 					</div>
 					<div className="col-md-6">
 						<div className="card">
-							<div className="card-header">App Component</div>
-
-							<div className="card-body">
-								I'm an app component!
-							</div>
+							<div className="card-header">Recent posts</div>
+							{
+								this.state.posts.map(post => 
+									<div key={post['payload']['id']} className="card-body">
+										{post['payload']['body']}
+									</div>
+								)
+							}
 						</div>
 					</div>
 				</div>
