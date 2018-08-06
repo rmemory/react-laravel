@@ -1,4 +1,5 @@
-import React, { Fragment } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 const Errors = ({errors}) => (
 	<div>
@@ -14,5 +15,9 @@ const Errors = ({errors}) => (
 		</div>
 	</div>
 );
+
+Errors.propTypes ={
+	errors: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
+};
 
 export default Errors;

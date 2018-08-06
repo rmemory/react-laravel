@@ -56,7 +56,6 @@ class App extends Component {
 			if (e['response']['data']['errors'] !== undefined) {
 				errors = e['response']['data']['errors'];
 			}
-
 			this.setState({ // eslint-disable-line react/no-did-mount-set-state
 				hasError: true,
 				errors,
@@ -70,34 +69,6 @@ class App extends Component {
 		this.setState({ 
 			body: event.target.value,
 		});
-	}
-
-	// Post data to the backend
-	async postData() {
-		try {
-			const result = await axios
-				.post('/posts', {
-					body: this.state.body,
-				});
-			if (result.status === 200) {
-				this.setState({
-					hasError: false,
-					errMsg: {},
-					body: '', // clear the body
-				});
-			} else {
-				this.setState({ // eslint-disable-line react/no-did-mount-set-state
-					hasError: true,
-					errors: result.data,
-				});
-			}
-		} catch (e) {
-			this.setState({ // eslint-disable-line react/no-did-mount-set-state
-				hasError: true,
-				errors: e['response']['data']['errors'],
-				body: '',
-			});
-		}
 	}
 
 	render() {
