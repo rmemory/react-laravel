@@ -15,6 +15,9 @@ Auth::routes();
 
 Route::group(['middleware' => ['auth']], function() {
 	Route::get("/", "TimelineController@index");
+
+	Route::get("/users/{user}", "UserController@index");
+
 	Route::get("/posts", "PostController@index");
 	Route::post("/posts", "PostController@create");
 });

@@ -136,13 +136,25 @@ class App extends Component {
 					<div className="col-md-6">
 						<div className="card">
 							<div className="card-header">Recent posts</div>
-							{
-								this.state.posts.map(post => 
-									<div key={post['payload']['id']} className="card-body">
-										{post['payload']['body']}
-									</div>
-								)
-							}
+							<div className="card-body">
+								{
+									this.state.posts.map(post => 
+										<div key={post['payload']['id']} className="media">
+											<div className="media-object">
+												<img className="media-object mr-2" src={post['payload']['user']['avatar']} />
+											</div>
+											<div className="media-body">
+												<div className="user">
+													<a href="#">
+														<strong>{post['payload']['user']['username']}</strong>
+													</a>
+												</div>
+											<p>{post['payload']['body']}</p>
+											</div>
+										</div>
+									)
+								}
+							</div>
 						</div>
 					</div>
 				</div>

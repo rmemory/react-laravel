@@ -55994,13 +55994,43 @@ var App = function (_Component) {
 								{ className: 'card-header' },
 								'Recent posts'
 							),
-							this.state.posts.map(function (post) {
-								return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-									'div',
-									{ key: post['payload']['id'], className: 'card-body' },
-									post['payload']['body']
-								);
-							})
+							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+								'div',
+								{ className: 'card-body' },
+								this.state.posts.map(function (post) {
+									return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+										'div',
+										{ key: post['payload']['id'], className: 'media' },
+										__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+											'div',
+											{ className: 'media-object' },
+											__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('img', { className: 'media-object mr-2', src: post['payload']['user']['avatar'] })
+										),
+										__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+											'div',
+											{ className: 'media-body' },
+											__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+												'div',
+												{ className: 'user' },
+												__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+													'a',
+													{ href: '#' },
+													__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+														'strong',
+														null,
+														post['payload']['user']['username']
+													)
+												)
+											),
+											__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+												'p',
+												null,
+												post['payload']['body']
+											)
+										)
+									);
+								})
+							)
 						)
 					)
 				)
