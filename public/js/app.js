@@ -36362,13 +36362,60 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__App_jsx__ = __webpack_require__(58);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 
 
 
 
-if (document.getElementById('root')) {
-    __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__App_jsx__["a" /* default */], null), document.getElementById('root'));
+
+var Main = function (_Component) {
+	_inherits(Main, _Component);
+
+	function Main(props) {
+		_classCallCheck(this, Main);
+
+		var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+
+		_this.state = {
+			errors: {},
+			hasError: false
+		};
+		return _this;
+	}
+
+	// React's Error Boundary life cycle method
+
+
+	_createClass(Main, [{
+		key: 'componentDidCatch',
+		value: function componentDidCatch(error, info) {
+			// Display fallback UI
+			this.setState({
+				hasError: true,
+				errors: error
+			});
+			// Log the error
+			console.error(error, info);
+		}
+	}, {
+		key: 'render',
+		value: function render() {
+			return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__App_jsx__["a" /* default */], { hasError: this.state.hasError, errors: this.state.errors });
+		}
+	}]);
+
+	return Main;
+}(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
+
+if (document.getElementById('main')) {
+	__WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(Main, null), document.getElementById('main'));
 }
 
 /***/ }),
@@ -55768,6 +55815,8 @@ module.exports = camelize;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Errors_jsx__ = __webpack_require__(62);
 
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -55797,27 +55846,110 @@ var App = function (_Component) {
 			body: '',
 			posts: [],
 			errors: {},
-			hasError: false
+			hasError: false,
+			loading: false
 		};
 
 		_this.handleSubmit = _this.handleSubmit.bind(_this);
 		_this.handleTextAreaChange = _this.handleTextAreaChange.bind(_this);
+		_this.handleResponseError = _this.handleResponseError.bind(_this);
+		_this.handleResponseException = _this.handleResponseException.bind(_this);
+		_this.renderPosts = _this.renderPosts.bind(_this);
 		return _this;
 	}
 
-	// React's Error Boundary life cycle method
-
-
 	_createClass(App, [{
-		key: 'componentDidCatch',
-		value: function componentDidCatch(error, info) {
-			// Display fallback UI
-			this.setState({
+		key: 'componentDidMount',
+		value: function () {
+			var _ref = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee() {
+				var response;
+				return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
+					while (1) {
+						switch (_context.prev = _context.next) {
+							case 0:
+								// this.getPosts();
+								this.setState({ loading: true });
+								_context.prev = 1;
+								_context.next = 4;
+								return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/posts');
+
+							case 4:
+								response = _context.sent;
+
+								// We have received a result ...
+								// The first conditional handles a successful post
+								if (response.data && response.data.success === true && // likely only includes http_code = 200
+								response.status === 200) /* not part of the response payload */{
+
+										this.setState({
+											posts: [].concat(_toConsumableArray(response.data.payload))
+										});
+									} else {
+									this.handleResponseError();
+								}
+								_context.next = 11;
+								break;
+
+							case 8:
+								_context.prev = 8;
+								_context.t0 = _context['catch'](1);
+
+								this.handleResponseException(_context.t0);
+
+							case 11:
+
+								this.setState({ loading: false });
+
+							case 12:
+							case 'end':
+								return _context.stop();
+						}
+					}
+				}, _callee, this, [[1, 8]]);
+			}));
+
+			function componentDidMount() {
+				return _ref.apply(this, arguments);
+			}
+
+			return componentDidMount;
+		}()
+	}, {
+		key: 'handleResponseError',
+		value: function handleResponseError(response) {
+			var errorObject = {};
+			/*
+    * This case is here for the situation where the app running on the 
+    * server returns a response which for whatever reason failed, but 
+    * isn't interpreted by the client as a "server error" (which are handled
+    * by the catch statement below). In these situations, we only support 
+    * a single error message, which must be assigned to the "error" field
+    * in the response.
+    */
+			if (response.data !== undefined && response.data.error !== undefined && response.data.error !== '') {
+				errorObject.aUniqueKey = [response.data.error];
+			}
+			this.setState({ // eslint-disable-line react/no-did-mount-set-state
 				hasError: true,
-				errors: error
+				errors: errorObject
 			});
-			// Log the error
-			console.error(error, info);
+		}
+	}, {
+		key: 'handleResponseException',
+		value: function handleResponseException(exception) {
+			var errors = {};
+			if (exception['response'] === undefined) {
+				console.error(exception.message);
+			} else if (exception['response']['data']['errors'] !== undefined) {
+				errors = exception['response']['data']['errors'];
+			} else {
+				console.error("Unknown exception:");
+				console.error(exception);
+			}
+			this.setState({ // eslint-disable-line react/no-did-mount-set-state
+				hasError: true,
+				errors: errors
+			});
 		}
 
 		/* Called when the user presses the submit button. We wait for the response
@@ -55826,83 +55958,60 @@ var App = function (_Component) {
 	}, {
 		key: 'handleSubmit',
 		value: function () {
-			var _ref = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee(event) {
-				var result, errorObject, errors;
-				return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
+			var _ref2 = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee2(event) {
+				var response;
+				return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee2$(_context2) {
 					while (1) {
-						switch (_context.prev = _context.next) {
+						switch (_context2.prev = _context2.next) {
 							case 0:
-								_context.prev = 0;
+								_context2.prev = 0;
 
 								// const target = event.target;
 								event.preventDefault();
-								_context.next = 4;
+								_context2.next = 4;
 								return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post('/posts', {
 									body: this.state.body
 								});
 
 							case 4:
-								result = _context.sent;
+								response = _context2.sent;
 
 
 								// We have received a result ...
 								// The first conditional handles a successful post
-								if (result.data && result.data.success === true && // likely only includes http_code = 200
-								result.status === 200) /* not part of the response payload */{
+								if (response.data && response.data.success === true && // likely only includes http_code = 200
+								response.status === 200) /* not part of the response payload */{
 
 										// target.reset();
 										this.setState({
 											hasError: false,
 											errors: {},
 											body: '', // clear the body
-											posts: [].concat(_toConsumableArray(this.state.posts), [result.data])
+											posts: [].concat(_toConsumableArray(this.state.posts), _toConsumableArray(response.data.payload))
 										});
 									} else {
-									errorObject = {};
-									/*
-          * This case is here for the situation where the app running on the 
-          * server returns a response which for whatever reason failed, but 
-          * isn't interpreted by the client as a "server error" (which are handled
-          * by the catch statement below). In these situations, we only support 
-          * a single error message, which must be assigned to the "error" field
-          * in the response.
-          */
-
-									if (result.data.error !== undefined && result.data.error !== '') {
-										errorObject.aUniqueKey = result.data.error;
-									}
-									this.setState({ // eslint-disable-line react/no-did-mount-set-state
-										hasError: true,
-										errors: errorObject
-									});
+									this.handleResponseError(response);
 								}
 								// This catches the rest of the server errors
-								_context.next = 13;
+								_context2.next = 11;
 								break;
 
 							case 8:
-								_context.prev = 8;
-								_context.t0 = _context['catch'](0);
-								errors = {};
+								_context2.prev = 8;
+								_context2.t0 = _context2['catch'](0);
 
-								if (_context.t0['response']['data']['errors'] !== undefined) {
-									errors = _context.t0['response']['data']['errors'];
-								}
-								this.setState({ // eslint-disable-line react/no-did-mount-set-state
-									hasError: true,
-									errors: errors
-								});
+								this.handleResponseException(_context2.t0);
 
-							case 13:
+							case 11:
 							case 'end':
-								return _context.stop();
+								return _context2.stop();
 						}
 					}
-				}, _callee, this, [[0, 8]]);
+				}, _callee2, this, [[0, 8]]);
 			}));
 
 			function handleSubmit(_x) {
-				return _ref.apply(this, arguments);
+				return _ref2.apply(this, arguments);
 			}
 
 			return handleSubmit;
@@ -55918,17 +56027,68 @@ var App = function (_Component) {
 				body: event.target.value
 			});
 		}
+	}, {
+		key: 'renderPosts',
+		value: function renderPosts() {
+			return this.state.posts.map(function (post) {
+				return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+					'div',
+					{ key: post['id'], className: 'media' },
+					__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+						'div',
+						{ className: 'media-object' },
+						__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('img', { className: 'media-object mr-2', src: post['user']['avatar'] })
+					),
+					__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+						'div',
+						{ className: 'media-body' },
+						__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+							'div',
+							{ className: 'user' },
+							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+								'a',
+								{ href: '/users/' + post['user']['username'] },
+								__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+									'strong',
+									null,
+									post['user']['username']
+								)
+							)
+						),
+						__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+							'p',
+							null,
+							post['body'],
+							' - ',
+							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+								'strong',
+								null,
+								post['humanCreatedAt']
+							)
+						)
+					)
+				);
+			});
+		}
 
 		// The render method
 
 	}, {
 		key: 'render',
 		value: function render() {
+			var body = this.state.body;
 			var _state = this.state,
 			    hasError = _state.hasError,
-			    errors = _state.errors,
-			    body = _state.body;
+			    errors = _state.errors;
+			var _props = this.props,
+			    propsHasError = _props.hasError,
+			    propsErrors = _props.errors;
 
+
+			if (propsHasError) {
+				hasError = propsHasError;
+				errors = _extends({}, errors, propsErrors);
+			}
 
 			if (hasError && (errors === undefined || Object.keys(errors).length === 0 && errors.constructor === Object)) {
 				// Catch all case
@@ -55997,39 +56157,7 @@ var App = function (_Component) {
 							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 								'div',
 								{ className: 'card-body' },
-								this.state.posts.map(function (post) {
-									return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-										'div',
-										{ key: post['payload']['id'], className: 'media' },
-										__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-											'div',
-											{ className: 'media-object' },
-											__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('img', { className: 'media-object mr-2', src: post['payload']['user']['avatar'] })
-										),
-										__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-											'div',
-											{ className: 'media-body' },
-											__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-												'div',
-												{ className: 'user' },
-												__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-													'a',
-													{ href: '/users/' + post['payload']['user']['username'] },
-													__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-														'strong',
-														null,
-														post['payload']['user']['username']
-													)
-												)
-											),
-											__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-												'p',
-												null,
-												post['payload']['body']
-											)
-										)
-									);
-								})
+								this.state.loading ? 'Loading ..' : this.renderPosts()
 							)
 						)
 					)

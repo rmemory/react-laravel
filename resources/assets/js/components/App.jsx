@@ -11,91 +11,145 @@ class App extends Component {
 			posts: [],
 			errors: {},
 			hasError: false,
+			loading: false,
 		}
 
 		this.handleSubmit = this.handleSubmit.bind(this); 
 		this.handleTextAreaChange = this.handleTextAreaChange.bind(this);
+		this.handleResponseError = this.handleResponseError.bind(this);
+		this.handleResponseException = this.handleResponseException.bind(this);
+		this.renderPosts = this.renderPosts.bind(this);
 	}
 
-	// React's Error Boundary life cycle method
-	componentDidCatch(error, info) {
-		// Display fallback UI
-		this.setState({ 
-			hasError: true,
-			errors: error,
-		});
-		// Log the error
-		console.error(error, info);
-	  }
+	async componentDidMount() {
+		// this.getPosts();
+		this.setState({loading: true});
+		try {
+			const response = await axios.get('/posts');
+			// We have received a result ...
+			// The first conditional handles a successful post
+			if (response.data &&
+				response.data.success === true && // likely only includes http_code = 200
+				response.status === 200) /* not part of the response payload */ {
 	
+				this.setState({
+					posts: [...response.data.payload]
+				});
+			} else {
+				this.handleResponseError();
+			}
+		} catch (e) {
+			this.handleResponseException(e);
+		}
+
+		this.setState({loading: false});
+	}
+
+	handleResponseError(response) {
+		const errorObject = {};
+		/*
+		 * This case is here for the situation where the app running on the 
+		 * server returns a response which for whatever reason failed, but 
+		 * isn't interpreted by the client as a "server error" (which are handled
+		 * by the catch statement below). In these situations, we only support 
+		 * a single error message, which must be assigned to the "error" field
+		 * in the response.
+		 */
+		if (response.data !== undefined && response.data.error !== undefined && response.data.error !== '') {
+			errorObject.aUniqueKey = [response.data.error];
+		}
+		this.setState({ // eslint-disable-line react/no-did-mount-set-state
+			hasError: true,
+			errors: errorObject,
+		});
+	}
+
+	handleResponseException(exception) {
+		let errors = {};
+		if (exception['response'] === undefined) {
+			console.error(exception.message);
+		} else if (exception['response']['data']['errors'] !== undefined) {
+			errors = exception['response']['data']['errors'];
+		} else {
+			console.error("Unknown exception:");
+			console.error(exception);
+		}
+		this.setState({ // eslint-disable-line react/no-did-mount-set-state
+			hasError: true,
+			errors,
+		});
+	}
 
 	/* Called when the user presses the submit button. We wait for the response
 	 * asynchronously. */
-	async handleSubmit (event) {
+	async handleSubmit(event) {
 		try {
 			// const target = event.target;
 			event.preventDefault();
-			const result = await axios
+			const response = await axios
 				.post('/posts', {
 					body: this.state.body,
 				});
 			
 			// We have received a result ...
 			// The first conditional handles a successful post
-			if (result.data &&
-				result.data.success === true && // likely only includes http_code = 200
-				result.status === 200) /* not part of the response payload */ {
+			if (response.data &&
+				response.data.success === true && // likely only includes http_code = 200
+				response.status === 200) /* not part of the response payload */ {
 
 				// target.reset();
 				this.setState({
 					hasError: false,
 					errors: {},
 					body: '', // clear the body
-					posts: [...this.state.posts, result.data],
+					posts: [...this.state.posts, ...response.data.payload],
 				});
 				
 			} else {
-				const errorObject = {};
-				/*
-				 * This case is here for the situation where the app running on the 
-				 * server returns a response which for whatever reason failed, but 
-				 * isn't interpreted by the client as a "server error" (which are handled
-				 * by the catch statement below). In these situations, we only support 
-				 * a single error message, which must be assigned to the "error" field
-				 * in the response.
-				 */
-				if (result.data.error !== undefined && result.data.error !== '') {
-					errorObject.aUniqueKey = result.data.error;
-				}
-				this.setState({ // eslint-disable-line react/no-did-mount-set-state
-					hasError: true,
-					errors: errorObject,
-				});
+				this.handleResponseError(response);
 			}
 		// This catches the rest of the server errors
 		} catch (e) {
-			let errors = {};
-			if (e['response']['data']['errors'] !== undefined) {
-				errors = e['response']['data']['errors'];
-			}
-			this.setState({ // eslint-disable-line react/no-did-mount-set-state
-				hasError: true,
-				errors,
-			});
+			this.handleResponseException(e);
 		}
 	}
 
 	// Called as the user types a post, but does not submit
-	handleTextAreaChange (event) {
+	handleTextAreaChange(event) {
 		event.preventDefault();
 		this.setState({ 
 			body: event.target.value,
 		});
 	}
 
+	renderPosts() {
+		return this.state.posts.map(post => 
+			<div key={post['id']} className="media">
+				<div className="media-object">
+					<img className="media-object mr-2" src={post['user']['avatar']} />
+				</div>
+				<div className="media-body">
+					<div className="user">
+						<a href={`/users/${post['user']['username']}`}>
+							<strong>{post['user']['username']}</strong>
+						</a>
+					</div>
+				<p>{post['body']} - <strong>{post['humanCreatedAt']}</strong></p>
+				</div>
+			</div>
+		);
+	}
+
 	// The render method
 	render() {
-		const { hasError, errors, body } = this.state;
+		const { body } = this.state;
+		let { hasError, errors } = this.state;
+		const { hasError:propsHasError, errors:propsErrors } = this.props;
+
+		if (propsHasError) {
+			hasError = propsHasError;
+			errors = {...errors, ...propsErrors};
+		}
 
 		if (hasError && (errors === undefined ||
 						 (Object.keys(errors).length === 0 &&
@@ -137,23 +191,7 @@ class App extends Component {
 						<div className="card">
 							<div className="card-header">Recent posts</div>
 							<div className="card-body">
-								{
-									this.state.posts.map(post => 
-										<div key={post['payload']['id']} className="media">
-											<div className="media-object">
-												<img className="media-object mr-2" src={post['payload']['user']['avatar']} />
-											</div>
-											<div className="media-body">
-												<div className="user">
-													<a href={`/users/${post['payload']['user']['username']}`}>
-														<strong>{post['payload']['user']['username']}</strong>
-													</a>
-												</div>
-											<p>{post['payload']['body']}</p>
-											</div>
-										</div>
-									)
-								}
+								{this.state.loading?'Loading ..':this.renderPosts()}
 							</div>
 						</div>
 					</div>

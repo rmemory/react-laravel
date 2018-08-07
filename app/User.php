@@ -43,7 +43,14 @@ class User extends Authenticatable
 		return $this->belongsToMany('App\User', 
 									'follows', 
 									'user_id', 
-									'following_user_id');
+									'follow_user_id');
+	}
+
+	public function followers() {
+		return $this->belongsToMany('App\User', 
+									'follows',
+									'follow_user_id', 
+									'user_id');
 	}
 
 	// A helper function to see if the user passed in is the current user

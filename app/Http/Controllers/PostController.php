@@ -12,9 +12,15 @@ use Log;
 
 class PostController extends Controller
 {
-	public function index() {
+	public function index(Request $request, Post $post) {
 		$response = app(AjaxResponse::class);
-		return $response->success(Post::all());
+		/* Get all of the posts from both (a) the list of people the user is 
+		   following, and (b) also the posts from himself */
+		$allPosts = $post->whereIn('user_id', $request->user()->following()->pluck('users.id')->push($request->user()->id))->with('user');
+
+		$posts = $allPosts->orderBy('created_at', 'desc')->take(10)->get();
+
+		return $response->success($posts);
 	}
 
 	public function create(Request $request, Post $post) {
@@ -59,6 +65,6 @@ class PostController extends Controller
 			'body' => $data['body'],
 		]);
 
-		return $response->success($post->with('user')->find($createdPost->id));
+		return $response->success(array($post->with('user')->find($createdPost->id)));
 	}
 }
