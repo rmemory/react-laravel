@@ -145,7 +145,7 @@ class App extends Component {
 											</div>
 											<div className="media-body">
 												<div className="user">
-													<a href="#">
+													<a href={`/users/${post['payload']['user']['username']}`}>
 														<strong>{post['payload']['user']['username']}</strong>
 													</a>
 												</div>

@@ -8,7 +8,11 @@ use App\User;
 
 class UserController extends Controller
 {
-	public function index(User $user) {
+	public function index() {
 
+	}
+
+	public function show(User $user) {
+		return view('users.show', compact('user'));
 	}
 }

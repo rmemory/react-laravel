@@ -56014,7 +56014,7 @@ var App = function (_Component) {
 												{ className: 'user' },
 												__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 													'a',
-													{ href: '#' },
+													{ href: '/users/' + post['payload']['user']['username'] },
 													__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 														'strong',
 														null,
