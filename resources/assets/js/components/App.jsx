@@ -163,7 +163,7 @@ class App extends Component {
 				<div className="row justify-content-center">
 					<div className="col-md-6">
 						<div className="card">
-							<div className="card-header">Post something...</div>
+							<div className="card-header bg-info font-weight-bold">Post something...</div>
 							<div className="card-body">
 								<form onSubmit={this.handleSubmit}>
 									<div className="form-group">
@@ -177,7 +177,7 @@ class App extends Component {
 											placeholder="What's up?"
 											required />
 									</div>
-									<input className="form-control" type="submit" value="Post" />
+									<input className="form-control btn-primary" type="submit" value="Create Post" />
 									{
 										// If there are error messages
 										hasError &&
@@ -189,7 +189,7 @@ class App extends Component {
 					</div>
 					<div className="col-md-6">
 						<div className="card">
-							<div className="card-header">Recent posts</div>
+							<div className="card-header bg-info font-weight-bold">Recent posts</div>
 							<div className="card-body">
 								{this.state.loading?'Loading ..':this.renderPosts()}
 							</div>

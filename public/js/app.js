@@ -56113,7 +56113,7 @@ var App = function (_Component) {
 							{ className: 'card' },
 							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 								'div',
-								{ className: 'card-header' },
+								{ className: 'card-header bg-info font-weight-bold' },
 								'Post something...'
 							),
 							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
@@ -56135,7 +56135,7 @@ var App = function (_Component) {
 											placeholder: 'What\'s up?',
 											required: true })
 									),
-									__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('input', { className: 'form-control', type: 'submit', value: 'Post' }),
+									__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('input', { className: 'form-control btn-primary', type: 'submit', value: 'Create Post' }),
 
 									// If there are error messages
 									hasError && __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__Errors_jsx__["a" /* default */], { errors: errors })
@@ -56151,7 +56151,7 @@ var App = function (_Component) {
 							{ className: 'card' },
 							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 								'div',
-								{ className: 'card-header' },
+								{ className: 'card-header bg-info font-weight-bold' },
 								'Recent posts'
 							),
 							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
