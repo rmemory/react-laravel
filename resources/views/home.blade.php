@@ -1,46 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-	{{-- React main application is mounted here --}}
-	<div id="main"></div>
 
-	<hr>
+<div class="col-md-12" style="background-color:white;padding:10px;margin-top:-24px;">
+    <div class="row">
 
-	<div class="row justify-content-center">
-		<div class="col-md-6">
-			<div class="card">
-				<div class="card-header bg-info font-weight-bold">People I am following...</div>
-				@if (count($following) > 0)
-					<div class="card-body">
-						<ul class="list-group">
-							@foreach($following as $user)
-								<li class="list-group-item">
-									<a href="{{ action('UserController@show', compact('user')) }}">{{ $user->username }}</a>
-								</li>
-							@endforeach
-						</ul>
-					</div>
-				@endif
-			</div>
-		</div>
+        <div class="col-md-4">
+            <h4 class="text-primary">{{ Auth::user()->username }}</h4>
+            <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->username }}" height="40">
+        </div>
 
-		<div class="col-md-6">
-			<div class="card">
-				<div class="card-header bg-info font-weight-bold">People who follow me...</div>
-				@if (count($followers) > 0)
-					<div class="card-body">
-					<ul class="list-group">
-						@foreach($followers as $user)
-							<li class="list-group-item">
-								<a href="{{ action('UserController@show', compact('user')) }}">{{ $user->username }}</a>
-							</li>
-						@endforeach
-					</ul>
-					</div>
-				@endif
-			</div>
-		</div>
-	</div>
+        <div class="col-md-4">
+            @if(Auth::user()->following->count())<h4>Following</h4>@endif
+            @foreach($following as $user)
+                <span><a href="{{ route('users', $user) }}" class="btn btn-sm btn-outline-primary">{{ $user->username }}</a></span>
+            @endforeach
+        </div>
+
+        <div class="col-md-4">
+            @if(Auth::user()->followers->count())<h4>Following</h4>@endif
+            @foreach($followers as $user)
+                <span><a href="{{ route('users', $user) }}" class="btn btn-sm btn-outline-success">{{ $user->username }}</a></span>
+            @endforeach
+        </div>
+    </div>
 </div>
+
+<br>
+
+<div class="col-md-12">
+    <div id="root"></div>
+</div>
+
+
+
 @endsection
