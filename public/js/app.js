@@ -36390,7 +36390,15 @@ var Main = function (_Component) {
 		return _this;
 	}
 
-	// React's Error Boundary life cycle method
+	/* 
+  * React's Error Boundary life cycle method
+  * 
+  * According to the docs, "error boundaries only catch errors in the
+  * components below them in the tree. An error boundary can’t catch
+  * an error within itself."
+  * 
+  * Which is why it is implemented here.
+  */
 
 
 	_createClass(Main, [{
