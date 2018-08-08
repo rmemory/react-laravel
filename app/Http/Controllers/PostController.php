@@ -18,7 +18,7 @@ class PostController extends Controller
 		   following, and (b) also the posts from himself */
 		$allPosts = $post->whereIn('user_id', $request->user()->following()->pluck('users.id')->push($request->user()->id))->with('user');
 
-		$posts = $allPosts->orderBy('created_at', 'desc')->take(10)->get();
+		$posts = $allPosts->orderBy('created_at', 'desc')->take(8)->get();
 
 		return $response->success($posts);
 	}

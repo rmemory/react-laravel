@@ -55959,7 +55959,7 @@ var App = function (_Component) {
 		key: 'handleSubmit',
 		value: function () {
 			var _ref2 = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee2(event) {
-				var response;
+				var response, slicedPostsArray;
 				return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee2$(_context2) {
 					while (1) {
 						switch (_context2.prev = _context2.next) {
@@ -55982,12 +55982,15 @@ var App = function (_Component) {
 								if (response.data && response.data.success === true && // likely only includes http_code = 200
 								response.status === 200) /* not part of the response payload */{
 
-										// target.reset();
+										// Only allow 8 posts to be displayed (hard coded for now)
+										slicedPostsArray = [].concat(_toConsumableArray(this.state.posts)).slice(0, 7);
+
+
 										this.setState({
 											hasError: false,
 											errors: {},
 											body: '', // clear the body
-											posts: [].concat(_toConsumableArray(this.state.posts), _toConsumableArray(response.data.payload))
+											posts: [].concat(_toConsumableArray(response.data.payload), _toConsumableArray(slicedPostsArray))
 										});
 									} else {
 									this.handleResponseError(response);
@@ -56101,64 +56104,64 @@ var App = function (_Component) {
 
 			return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 				'div',
-				{ className: 'container' },
+				{ className: 'row justify-content-center' },
 				__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 					'div',
-					{ className: 'row justify-content-center' },
+					{ className: 'col-md-6' },
 					__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 						'div',
-						{ className: 'col-md-6' },
+						{ className: 'card' },
 						__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 							'div',
-							{ className: 'card' },
+							{ className: 'card-header bg-info font-weight-bold' },
+							'Post something...'
+						),
+						__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+							'div',
+							{ className: 'card-body' },
 							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-								'div',
-								{ className: 'card-header bg-info font-weight-bold' },
-								'Post something...'
-							),
-							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-								'div',
-								{ className: 'card-body' },
+								'form',
+								{ onSubmit: this.handleSubmit },
 								__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-									'form',
-									{ onSubmit: this.handleSubmit },
-									__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-										'div',
-										{ className: 'form-group' },
-										__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('textarea', {
-											className: 'form-control',
-											value: this.state.body,
-											maxLength: '140',
-											name: 'text', id: '',
-											onChange: this.handleTextAreaChange,
-											rows: '5',
-											placeholder: 'What\'s up?',
-											required: true })
-									),
-									__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('input', { className: 'form-control btn-primary', type: 'submit', value: 'Create Post' }),
+									'div',
+									{ className: 'form-group' },
+									__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement('textarea', {
+										className: 'form-control',
+										value: this.state.body,
+										maxLength: '140',
+										name: 'text', id: '',
+										onChange: this.handleTextAreaChange,
+										rows: '5',
+										placeholder: 'What\'s up?',
+										required: true })
+								),
+								__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+									'button',
+									{ className: 'form-control btn btn-primary', type: 'submit' },
+									'Create Post'
+								),
 
-									// If there are error messages
-									hasError && __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__Errors_jsx__["a" /* default */], { errors: errors })
-								)
+								// If there are error messages
+								hasError && __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__Errors_jsx__["a" /* default */], { errors: errors })
 							)
 						)
-					),
+					)
+				),
+				__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+					'div',
+					{ className: 'col-md-6' },
 					__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 						'div',
-						{ className: 'col-md-6' },
+						{ className: 'card' },
 						__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
 							'div',
-							{ className: 'card' },
-							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-								'div',
-								{ className: 'card-header bg-info font-weight-bold' },
-								'Recent posts'
-							),
-							__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
-								'div',
-								{ className: 'card-body' },
-								this.state.loading ? 'Loading ..' : this.renderPosts()
-							)
+							{ className: 'card-header bg-info font-weight-bold' },
+							'Recent posts'
+						),
+						__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(
+							'div',
+							{ className: 'card-body' },
+							this.state.loading ? 'Loading ..' : this.renderPosts()
 						)
 					)
 				)

@@ -97,12 +97,14 @@ class App extends Component {
 				response.data.success === true && // likely only includes http_code = 200
 				response.status === 200) /* not part of the response payload */ {
 
-				// target.reset();
+				// Only allow 8 posts to be displayed (hard coded for now)
+				const slicedPostsArray = [...this.state.posts].slice(0, 7);
+
 				this.setState({
 					hasError: false,
 					errors: {},
 					body: '', // clear the body
-					posts: [...this.state.posts, ...response.data.payload],
+					posts: [...response.data.payload, ...slicedPostsArray],
 				});
 				
 			} else {
@@ -159,7 +161,6 @@ class App extends Component {
 		}
 
 		return (
-			<div className="container">
 				<div className="row justify-content-center">
 					<div className="col-md-6">
 						<div className="card">
@@ -177,7 +178,9 @@ class App extends Component {
 											placeholder="What's up?"
 											required />
 									</div>
-									<input className="form-control btn-primary" type="submit" value="Create Post" />
+									<button className="form-control btn btn-primary" type="submit">
+										Create Post
+									</button>
 									{
 										// If there are error messages
 										hasError &&
@@ -196,7 +199,6 @@ class App extends Component {
 						</div>
 					</div>
 				</div>
-			</div>
 		);
 	}
 }

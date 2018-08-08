@@ -2,6 +2,25 @@
 
 This project provides an example of how to use Laravel with React
 
+#ToDos
+
+* Move at least some of the context, such as errors to the top
+level component and create a context, with appropriate setters
+
+* Move each card into its own separate component
+
+* Implement login as a modal
+
+* Create index page for users
+
+* Implement pagination for recent posts card
+
+* Users show as currently implemented sucks
+
+* Implement truely API routes as APIs
+
+* Implement React routing for routes that can be done on client
+
 # Setup
 
 This project demonstrates an example of using React with Laravel.
