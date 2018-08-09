@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Responses\AjaxResponse;
 use App\Post;
+use App\Events\PostCreated;
 
 use Illuminate\Http\Request;
 
@@ -64,6 +65,8 @@ class PostController extends Controller
 		$createdPost = $request->user()->posts()->create([
 			'body' => $data['body'],
 		]);
+
+		broadcast(new PostCreated($createdPost, $request->user()))->toOthers();
 
 		return $response->success(array($post->with('user')->find($createdPost->id)));
 	}

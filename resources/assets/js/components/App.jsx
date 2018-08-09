@@ -41,8 +41,18 @@ class App extends Component {
 		} catch (e) {
 			this.handleResponseException(e);
 		}
-
 		this.setState({loading: false});
+
+		Echo.private('new-post').listen('PostCreated', e => {
+			if (window.Laravel.user.following.includes(e.post.user_id)) {
+				// Only allow 8 posts to be displayed (hard coded for now)
+				const slicedPostsArray = [...this.state.posts].slice(0, 7);
+
+				this.setState({
+					posts: [e.post, ...slicedPostsArray],
+				});
+			}
+		});
 	}
 
 	handleResponseError(response) {
@@ -161,6 +171,7 @@ class App extends Component {
 		}
 
 		return (
+			<div class="container-fluid">
 				<div className="row justify-content-center">
 					<div className="col-md-6">
 						<div className="card">
@@ -199,6 +210,7 @@ class App extends Component {
 						</div>
 					</div>
 				</div>
+			</div>
 		);
 	}
 }

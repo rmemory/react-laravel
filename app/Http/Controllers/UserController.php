@@ -8,13 +8,8 @@ use App\User;
 
 class UserController extends Controller
 {
-	public function index() {
-		// TBD
-		return ('home');
-	}
-
-	public function show(User $user) {
-		return view('users.show', compact('user'));
+	public function index(User $user) {
+		return view('users.index', compact('user'));
 	}
 
 	// $request contains the currently logged in user

@@ -16,8 +16,7 @@ Auth::routes();
 Route::group(['middleware' => ['auth']], function() {
 	Route::get("/", "TimelineController@index");
 
-	Route::get("/users", "UserController@index");
-	Route::get("/users/{user}", "UserController@show");
+	Route::get("/users/{user}", "UserController@index");
 	Route::get("/users/{user}/follow", "UserController@follow");
 	Route::get("/users/{user}/unfollow", "UserController@unfollow");
 

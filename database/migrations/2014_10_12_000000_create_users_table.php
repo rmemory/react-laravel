@@ -30,6 +30,7 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+		DB::statement("SET foreign_key_checks=0");
+		Schema::dropIfExists('users');
     }
 }
